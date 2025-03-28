@@ -24,11 +24,6 @@ const router = createRouter({
           name: 'space-apps-list',
           component: () => import('@/views/space/apps/ListView.vue'),
         },
-        {
-          path: 'space/apps/:app_id',
-          name: 'space-apps-detail',
-          component: () => import('@/views/space/apps/DetailView.vue'),
-        },
       ],
     },
     {
@@ -40,13 +35,18 @@ const router = createRouter({
           name: 'auth-login',
           component: () => import('@/views/auth/LoginView.vue'),
         },
+        {
+          path: 'space/apps/:app_id',
+          name: 'space-apps-detail',
+          component: () => import('@/views/space/apps/DetailView.vue'),
+        },
       ],
     },
   ],
 })
 
 // todo:路由守卫逻辑还未实现
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
   if (!isLogin() && to.name != 'auth-login') {
     return { path: '/auth/login' }
   }
