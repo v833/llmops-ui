@@ -1,91 +1,34 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiPrefix } from '@/config'
+import axios, { type AxiosRequestConfig } from 'axios'
 
-// 1.超时时间为100s
-const TIME_OUT = 100000
-
-// 2.基础的配置
-const baseFetchOptions = {
-  method: 'GET',
-  mode: 'cors',
-  credentials: 'include',
-  headers: new Headers({
+export const request = axios.create({
+  baseURL: apiPrefix,
+  timeout: 10000, // 添加超时设置
+  headers: {
+    // 添加默认请求头
     'Content-Type': 'application/json',
-  }),
-  redirect: 'follow',
-}
+    Accept: 'application/json',
+  },
+})
 
-// 3.fetch参数类型
-type FetchOptionType = Omit<RequestInit, 'body'> & {
-  params?: Record<string, any>
-  body?: BodyInit | Record<string, any> | null
-}
+// 添加请求拦截器
+request.interceptors.request.use(
+  (config) => {
+    // 可以在这里添加token等
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  },
+)
 
-// 4.封装基础的fetch请求
-const baseFetch = <T>(url: string, fetchOptions: FetchOptionType): Promise<T> => {
-  // 5.将所有的配置信息合并起来
-  const options: typeof baseFetchOptions & FetchOptionType = Object.assign(
-    {},
-    baseFetchOptions,
-    fetchOptions,
-  )
-
-  // 6.组装url
-  let urlWithPrefix = `${apiPrefix}${url.startsWith('/') ? url : `/${url}`}`
-
-  // 7.解构出对应的请求方法、params、body参数
-  const { method, params, body } = options
-
-  // 8.如果请求是GET方法，并且传递了params参数
-  if (method === 'GET' && params) {
-    const paramsArray: string[] = []
-    Object.keys(params).forEach((key) => {
-      paramsArray.push(`${key}=${encodeURIComponent(params[key])}`)
-    })
-    if (urlWithPrefix.search(/\?/) === -1) {
-      urlWithPrefix += `?${paramsArray.join('&')}`
-    } else {
-      urlWithPrefix += `&${paramsArray.join('&')}`
-    }
-
-    delete options.params
-  }
-
-  // 9.处理post传递的数据
-  if (body) {
-    options.body = JSON.stringify(body)
-  }
-
-  // 10.同时发起两个Promise(或者是说两个操作，看谁先返回，就先结束)
-  return Promise.race([
-    // 11.使用定时器来检测是否超时
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject('接口已超时')
-      }, TIME_OUT)
-    }),
-    // 12.发起一个正常请求
-    new Promise((resolve, reject) => {
-      globalThis
-        .fetch(urlWithPrefix, options as RequestInit)
-        .then((res) => {
-          resolve(res.json())
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    }),
-  ]) as Promise<T>
-}
-
-export const request = <T>(url: string, options = {}) => {
-  return baseFetch<T>(url, options)
-}
-
-export const get = <T>(url: string, options = {}) => {
-  return request<T>(url, Object.assign({}, options, { method: 'GET' }))
-}
-
-export const post = <T>(url: string, options = {}) => {
-  return request<T>(url, Object.assign({}, options, { method: 'POST' }))
-}
+// 添加响应拦截器
+request.interceptors.response.use(
+  (response) => {
+    return response.data
+  },
+  (error) => {
+    // 统一错误处理
+    return Promise.reject(error)
+  },
+)

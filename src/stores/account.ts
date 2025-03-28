@@ -13,6 +13,7 @@ export const useAccountStore = defineStore('account', () => {
   const account = ref({ ...initAccount })
 
   // 2.函数/动作
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function update(params: any) {
     Object.assign(account.value, params)
   }
