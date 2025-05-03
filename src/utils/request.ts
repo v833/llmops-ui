@@ -1,9 +1,10 @@
-import { apiPrefix } from '@/config'
-import axios, { type AxiosRequestConfig } from 'axios'
+import { apiPrefix, httpCode } from '@/config'
+import { Message } from '@arco-design/web-vue'
+import axios, { type AxiosResponse } from 'axios'
 
 export const request = axios.create({
   baseURL: apiPrefix,
-  timeout: 10000, // 添加超时设置
+  timeout: 100000, // 添加超时设置
   headers: {
     // 添加默认请求头
     'Content-Type': 'application/json',
@@ -24,11 +25,18 @@ request.interceptors.request.use(
 
 // 添加响应拦截器
 request.interceptors.response.use(
-  (response) => {
-    return response.data
+  (response: AxiosResponse) => {
+    const data = response.data
+
+    if (data.code === httpCode.success) {
+      return data
+    }
+
+    return Promise.reject(data)
   },
   (error) => {
     // 统一错误处理
+    Message.error(error.message)
     return Promise.reject(error)
   },
 )
