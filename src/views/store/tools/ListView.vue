@@ -56,7 +56,7 @@ onMounted(async () => {
       <!-- 插件分类+搜索框 -->
       <div class="flex items-center justify-between mb-6">
         <!-- 左侧分类 -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 mr-1">
           <a-button
             :type="category === 'all' ? 'secondary' : 'text'"
             class="rounded-lg !text-gray-700 px-3"

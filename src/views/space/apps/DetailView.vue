@@ -1,4 +1,3 @@
-<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -84,7 +83,7 @@ const send = async () => {
               class="flex-shrink-0"
               :size="30"
             >
-              user
+              慕
             </a-avatar>
             <a-avatar
               v-else
@@ -97,7 +96,7 @@ const send = async () => {
             <!-- 实际消息 -->
             <div class="flex flex-col gap-2">
               <div class="font-semibold text-gray-700">
-                {{ message.role === 'human' ? '用户' : 'ChatGPT聊天机器人' }}
+                {{ message.role === 'human' ? '慕小课' : 'ChatGPT聊天机器人' }}
               </div>
               <div
                 v-if="message.role === 'human'"
