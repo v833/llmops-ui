@@ -1,6 +1,11 @@
-import { request } from '@/utils/request'
-import { type DebugAppResponse } from '@/models/app'
+import { ssePost } from '@/utils/request'
 
-export const debugApp = (app_id: string, query: string) => {
-  return request.post<DebugAppResponse>(`/apps/${app_id}/debug`, { query })
+export const debugApp = (app_id: string, query: string, onData: (event) => void) => {
+  return ssePost(
+    `/apps/${app_id}/debug`,
+    {
+      query,
+    },
+    onData,
+  )
 }
