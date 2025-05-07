@@ -137,7 +137,7 @@ const handleSubmit = async ({ errors }: { errors: Record<string, ValidatedError>
             </div>
           </div>
           <!-- 知识库的描述信息 -->
-          <div class="leading-[18px] text-gray-500 h-[72px] line-clamp-4 mb-2">
+          <div class="leading-[18px] text-gray-500 h-[72px] line-clamp-4 mb-2 break-all">
             {{ dataset.description }}
           </div>
           <!-- 知识库的归属者信息 -->
