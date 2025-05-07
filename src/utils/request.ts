@@ -1,7 +1,7 @@
 import { apiPrefix, httpCode } from '@/config'
 import { Message } from '@arco-design/web-vue'
 import axios, { type AxiosResponse } from 'axios'
-
+import { useCredentialStore } from '@/stores/credential'
 export const request = axios.create({
   baseURL: apiPrefix,
   timeout: 100000, // 添加超时设置
@@ -75,6 +75,71 @@ export async function ssePost(url, data, onData, onError?) {
   }
 
   read()
+}
+
+export const upload = <T>(url: string, options: any = {}): Promise<T> => {
+  // 1 组装请求URL
+  const urlWithPrefix = `${apiPrefix}${url.startsWith('/') ? url : `/${url}`}`
+
+  // 2.组装xhr请求配置信息
+  const defaultOptions = {
+    method: 'POST',
+    url: urlWithPrefix,
+    headers: {},
+    data: {},
+  }
+  options = {
+    ...defaultOptions,
+    ...options,
+    headers: { ...defaultOptions.headers, ...options.headers },
+  }
+  const { credential, clear: clearCredential } = useCredentialStore()
+  const access_token = credential.access_token
+  if (access_token) options.headers['Authorization'] = `Bearer ${access_token}`
+
+  // 3.构建promise并使用xhr完成文件上传
+  return new Promise((resolve, reject) => {
+    // 4.创建xhr服务
+    const xhr = new XMLHttpRequest()
+
+    // 5.初始化xhr请求并配置headers
+    xhr.open(options.method, options.url)
+    for (const key in options.headers) {
+      xhr.setRequestHeader(key, options.headers[key])
+    }
+
+    // 6.设置xhr响应格式并携带授权凭证（例如cookie）
+    xhr.withCredentials = true
+    xhr.responseType = 'json'
+
+    // 7.监听xhr状态变化并导出数据
+    xhr.onreadystatechange = async () => {
+      // 8.判断xhr的状态是不是为4，如果为4则代表已经传输完成（涵盖成功与失败）
+      if (xhr.readyState === 4) {
+        // 9.检查响应状态码，当HTTP状态码为200的时候表示请求成功
+        if (xhr.status === 200) {
+          // 10.判断业务状态码是否正常
+          const response = xhr.response
+          if (response.code === httpCode.success) {
+            resolve(response)
+          } else if (response.code === httpCode.unauthorized) {
+            clearCredential()
+            await router.replace({ path: '/auth/login' })
+          } else {
+            reject(xhr.response)
+          }
+        } else {
+          reject(xhr)
+        }
+      }
+    }
+
+    // 10.添加xhr进度监听
+    xhr.upload.onprogress = options.onprogress
+
+    // 11.发送请求
+    xhr.send(options.data)
+  })
 }
 // 添加请求拦截器
 request.interceptors.request.use(
