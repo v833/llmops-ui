@@ -2,6 +2,10 @@ import { apiPrefix, httpCode } from '@/config'
 import { Message } from '@arco-design/web-vue'
 import axios, { type AxiosResponse } from 'axios'
 import { useCredentialStore } from '@/stores/credential'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 export const request = axios.create({
   baseURL: apiPrefix,
   timeout: 100000, // 添加超时设置
@@ -95,6 +99,7 @@ export const upload = <T>(url: string, options: any = {}): Promise<T> => {
   }
   const { credential, clear: clearCredential } = useCredentialStore()
   const access_token = credential.access_token
+
   if (access_token) options.headers['Authorization'] = `Bearer ${access_token}`
 
   // 3.构建promise并使用xhr完成文件上传
@@ -145,6 +150,9 @@ export const upload = <T>(url: string, options: any = {}): Promise<T> => {
 request.interceptors.request.use(
   (config) => {
     // 可以在这里添加token等
+    const { credential, clear: clearCredential } = useCredentialStore()
+    const access_token = credential.access_token
+    if (access_token) config.headers['Authorization'] = `Bearer ${access_token}`
     return config
   },
   (error) => {
