@@ -14,7 +14,8 @@ import { type CreateApiToolProviderRequest } from '@/models/api-tool'
 import moment from 'moment/moment'
 import { typeMap } from '@/config'
 import { Form, Message, Modal, type ValidatedError } from '@arco-design/web-vue'
-
+import { useAccountStore } from '@/stores/account'
+const accountStore = useAccountStore()
 const route = useRoute()
 const props = defineProps({
   createType: {
@@ -287,7 +288,7 @@ watch(
               <icon-user />
             </a-avatar>
             <div class="text-xs text-gray-400">
-              wq · 编辑时间
+              {{ accountStore.account.name }} · 编辑时间
               {{ moment(provider.created_at * 1000).format('MM-DD HH:mm') }}
             </div>
           </div>

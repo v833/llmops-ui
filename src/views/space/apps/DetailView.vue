@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
 import { debugApp } from '@/services/app'
-
+import { useAccountStore } from '@/stores/account'
+const accountStore = useAccountStore()
 const query = ref('')
 const messages = ref<any[]>([])
 const isLoading = ref(false)
@@ -97,7 +98,7 @@ const send = async () => {
               class="flex-shrink-0"
               :size="30"
             >
-              wq
+              {{ accountStore.account.name }}
             </a-avatar>
             <a-avatar
               v-else

@@ -8,7 +8,8 @@ import { getDataset } from '@/services/dataset'
 import { uploadImage } from '@/services/upload-file'
 import moment from 'moment'
 import type { ValidatedError } from '@arco-design/web-vue'
-
+import { useAccountStore } from '@/stores/account'
+const accountStore = useAccountStore()
 let updateDatasetID = ''
 const props = defineProps({
   createType: {
@@ -146,7 +147,7 @@ const handleSubmit = async ({ errors }: { errors: Record<string, ValidatedError>
               <icon-user />
             </a-avatar>
             <div class="text-xs text-gray-400">
-              wq · 最近编辑
+              {{ accountStore.account.name }} · 最近编辑
               {{ moment(dataset.created_at * 1000).format('MM-DD HH:mm') }}
             </div>
           </div>
