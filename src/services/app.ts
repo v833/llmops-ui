@@ -40,8 +40,8 @@ export const updateDebugConversationSummary = (app_id: string, summary: string) 
   return request.post<BaseResponse<any>>(`/apps/${app_id}/summary`, { summary })
 }
 
-export const debugChat = (app_id: string, query: string, onData: (event) => void) => {
-  return ssePost(
+export const debugChat = async (app_id: string, query: string, onData: (event) => void) => {
+  return await ssePost(
     `/apps/${app_id}/conversations`,
     {
       query,

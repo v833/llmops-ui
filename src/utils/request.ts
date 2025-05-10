@@ -16,6 +16,71 @@ export const request = axios.create({
   },
 })
 
+const handleStream = (
+  response: Response,
+  onData: (data: Record<string, any>) => void,
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    // 1.检测网络请求是否正常
+    if (!response.ok) {
+      reject(new Error('网络请求失败'))
+      return
+    }
+
+    // 2.构建reader以及deocder
+    const reader = response.body?.getReader()
+    const decoder = new TextDecoder('utf-8')
+    let buffer = ''
+
+    // 3.构建read函数用于去读取数据
+    const read = () => {
+      reader?.read().then((result: any) => {
+        if (result.done) {
+          resolve()
+          return
+        }
+
+        buffer += decoder.decode(result.value, { stream: true })
+        const lines = buffer.split('\n')
+
+        let event = ''
+        let data = ''
+
+        try {
+          lines.forEach((line) => {
+            line = line.trim()
+            if (line.startsWith('event:')) {
+              event = line.slice(6).trim()
+            } else if (line.startsWith('data:')) {
+              data = line.slice(5).trim()
+            }
+
+            // 每个事件以空行结束，只有event和data同时存在，才表示一次流式事件的数据完整获取到了
+            if (line === '') {
+              if (event !== '' && data !== '') {
+                onData({
+                  event: event,
+                  data: JSON.parse(data),
+                })
+                event = ''
+                data = ''
+              }
+            }
+          })
+          buffer = lines.pop() || ''
+        } catch (e) {
+          reject(e)
+        }
+
+        read()
+      })
+    }
+
+    // 4.调用read函数去执行获取对应的数据
+    read()
+  })
+}
+
 export async function ssePost(url, data, onData, onError?) {
   const response = await fetch(`${apiPrefix}${url}`, {
     method: 'POST',
@@ -30,56 +95,7 @@ export async function ssePost(url, data, onData, onError?) {
     body: JSON.stringify(data),
   })
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
-  }
-
-  const reader = response?.body!.getReader()
-  const decoder = new TextDecoder('utf-8')
-  let buffer = ''
-
-  const read = () => {
-    let hasError = false
-    reader?.read().then((result: any) => {
-      if (result.done) return
-
-      buffer += decoder.decode(result.value, { stream: true })
-      const lines = buffer.split('\n')
-
-      let event = ''
-      let data = ''
-
-      try {
-        lines.forEach((line) => {
-          line = line.trim()
-          if (line.startsWith('event:')) {
-            event = line.slice(6).trim()
-          } else if (line.startsWith('data:')) {
-            data = line.slice(5).trim()
-          }
-
-          // 每个事件以空行结束，只有event和data同时存在，才表示一次流式事件的数据完整获取到了
-          if (line === '') {
-            if (event !== '' && data !== '') {
-              onData({
-                event: event,
-                data: JSON.parse(data),
-              })
-              event = ''
-              data = ''
-            }
-          }
-        })
-        buffer = lines.pop() || ''
-      } catch (e) {
-        hasError = true
-      }
-
-      if (!hasError) read()
-    })
-  }
-
-  read()
+  return await handleStream(response, onData)
 }
 
 export const upload = <T>(url: string, options: any = {}): Promise<T> => {
