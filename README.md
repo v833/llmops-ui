@@ -2,6 +2,7 @@
 
 <div align="center">
   <p>一个强大的AI/Agent开发平台，帮助您快速构建、部署和管理AI应用</p>
+  <p>服务: https://github.com/v833/llmops-api</p>
 </div>
 
 ## 📖 项目介绍
