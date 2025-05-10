@@ -25,6 +25,7 @@ export async function ssePost(url, data, onData, onError?) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'text/event-stream',
+      Authorization: `Bearer ${useCredentialStore().credential.access_token}`,
     },
     body: JSON.stringify(data),
   })

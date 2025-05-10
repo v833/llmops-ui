@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// @ts-ignore
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { nextTick, onMounted, type PropType, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import {
@@ -115,7 +118,6 @@ const handleSubmit = async () => {
       messages.value[0].id = data?.message_id
       messages.value[0].conversation_id = data?.conversation_id
     }
-
     // 5.9 循环处理得到的事件，记录除ping之外的事件
     if (event !== QueueEvent.ping) {
       // 5.10 除了agent_message数据为叠加，其他均为覆盖
