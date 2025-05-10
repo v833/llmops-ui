@@ -42,3 +42,8 @@ export const deleteApiToolProvider = (provider_id: string) => {
 export const getApiToolProvider = (provider_id: string) => {
   return request.get<GetApiToolProviderResponse>(`/api-tools/${provider_id}`)
 }
+
+// 获取API工具详情信息
+export const getApiTool = (provider_id: string, tool_name: string) => {
+  return request.get(`/api-tools/${provider_id}/tools/${tool_name}`)
+}

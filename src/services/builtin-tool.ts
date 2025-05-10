@@ -10,3 +10,8 @@ export const getCategories = async () => {
 export const getBuiltinTools = async () => {
   return request.get<GetBuiltinToolsResponse>('/builtin-tools')
 }
+
+// 获取内置工具详情
+export const getBuiltinTool = (provider_name: string, tool_name: string) => {
+  return request.get(`/builtin-tools/${provider_name}/tools/${tool_name}`)
+}
