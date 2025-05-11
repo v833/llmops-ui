@@ -104,7 +104,7 @@ const handleSubmit = async () => {
   query.value = ''
 
   // 5.6 调用hooks发起请求
-  await handleDebugChat(props.app?.id, humanQuery, (event_response) => {
+  await handleDebugChat(props.app?.id || route.params.app_id, humanQuery, (event_response) => {
     // 5.7 提取流式事件响应数据以及事件名称
     const event = event_response?.event
     const data = event_response?.data

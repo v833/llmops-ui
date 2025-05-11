@@ -11,6 +11,5 @@ export const optimizePrompt = (
 
 // 生成建议问题列表接口
 export const generateSuggestedQuestions = (message_id: string) => {
-  debugger
   return request.post<BaseResponse<string[]>>(`/ai/suggested-questions`, { message_id })
 }
