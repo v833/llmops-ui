@@ -17,6 +17,9 @@ export type GetAppResponse = BaseResponse<{
   created_at: number
 }>
 
+// 更新应用请求结构
+export type UpdateAppRequest = { name: string; icon: string; description: string }
+
 // 新增应用请求结构
 export type CreateAppRequest = { name: string; icon: string; description: string }
 
@@ -130,4 +133,17 @@ export type GetAppsWithPageResponse = BasePaginatorResponse<{
   status: string
   updated_at: number
   created_at: number
+}>
+
+// 获取应用发布配置响应结构
+export type GetPublishedConfigResponse = BaseResponse<{
+  web_app: {
+    token: string
+    status: string
+  }
+}>
+
+// 重新生成WebApp凭证标识响应结构
+export type RegenerateWebAppTokenResponse = BaseResponse<{
+  token: string
 }>

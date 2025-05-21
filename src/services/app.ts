@@ -9,6 +9,8 @@ import type {
   UpdateDraftAppConfigRequest,
   GetAppsWithPageRequest,
   GetAppsWithPageResponse,
+  GetPublishedConfigResponse,
+  RegenerateWebAppTokenResponse,
 } from '@/models/app'
 import type { BasePaginatorRequest, BaseResponse } from '@/models/base' // 获取应用基础信息
 
@@ -114,4 +116,16 @@ export const copyApp = (app_id: string) => {
 // 获取应用分页列表数据
 export const getAppsWithPage = (req: GetAppsWithPageRequest) => {
   return request.get<GetAppsWithPageResponse>(`/apps`, { params: req })
+}
+
+// 获取指定应用的发布配置信息
+export const getPublishedConfig = (app_id: string) => {
+  return request.get<GetPublishedConfigResponse>(`/apps/${app_id}/published-config`)
+}
+
+// 重新生成 WebApp 的凭证标识
+export const regenerateWebAppToken = (app_id: string) => {
+  return request.post<RegenerateWebAppTokenResponse>(
+    `/apps/${app_id}/published-config/regenerate-web-app-token`,
+  )
 }
