@@ -481,7 +481,7 @@ onMounted(async () => {
         v-model:edges="edges"
         @update:nodes="onChange"
         @update:edges="onChange"
-        style="position: inherit; height: 100%"
+        style="height: calc(100vh - 77px)"
       >
         <!-- 工作流背景 -->
         <background />
@@ -683,7 +683,17 @@ onMounted(async () => {
                 </a-dropdown>
               </div>
               <!-- 调试与预览 -->
-              <a-button type="text" size="small" class="px-2 rounded-lg" @click="isDebug = true">
+              <a-button
+                type="text"
+                size="small"
+                class="px-2 rounded-lg"
+                @click="
+                  () => {
+                    selectedNode = null
+                    isDebug = true
+                  }
+                "
+              >
                 <template #icon>
                   <icon-play-arrow />
                 </template>

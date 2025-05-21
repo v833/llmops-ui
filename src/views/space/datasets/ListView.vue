@@ -17,7 +17,7 @@ const props = defineProps({
     required: true,
   },
 })
-const emits = defineEmits(['update-create-type'])
+const emits = defineEmits(['update:create-type'])
 const { loading, datasets, paginator, loadDatasets } = useGetDatasetsWithPage()
 const {
   loading: submitLoading,
@@ -68,7 +68,7 @@ const handleCancel = () => {
     formRef.value?.resetFields()
 
     // 2.隐藏表单模态窗
-    emits('update-create-type', '')
+    emits('update:create-type', '')
   })
 }
 
