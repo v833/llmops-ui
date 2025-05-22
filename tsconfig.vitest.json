@@ -3,6 +3,7 @@
   "include": ["src/**/__tests__/*", "env.d.ts"],
   "exclude": [],
   "compilerOptions": {
+    "incremental": true, // 添加此行
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
 
     "lib": [],
